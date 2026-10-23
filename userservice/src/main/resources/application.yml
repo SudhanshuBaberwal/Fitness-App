@@ -1,20 +1,20 @@
-spring:
-  application:
-    name: userservice
-  datasource:
-    url: jdbc:postgresql://localhost:5432/fitness-micro-user
-    username: postgres
-    password: Babbar@123
+  spring:
+    application:
+      name: userservice
+    datasource:
+      url: jdbc:postgresql://localhost:5432/fitness-micro-user
+      username: postgres
+      password: Babbar@123
 
-  jpa:
-    hibernate:
-      ddl-auto: update
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    jpa:
+      hibernate:
+        ddl-auto: update
+      database-platform: org.hibernate.dialect.PostgreSQLDialect
 
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://localhost:8761/eureka
+  eureka:
+    client:
+      serviceUrl:
+        defaultZone: http://localhost:8761/eureka
 
-server:
-  port: 8081
+  server:
+    port: 8081

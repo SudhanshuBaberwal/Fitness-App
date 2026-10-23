@@ -5,7 +5,10 @@ import com.fitness.activityService.dto.ActivityResponse;
 import com.fitness.activityService.model.Activity;
 import com.fitness.activityService.repository.ActivityRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
 @Service
 @RequiredArgsConstructor
@@ -13,6 +16,11 @@ public class ActivityService {
 
     private final ActivityRepository activityRepository;
     private final UserValidationService userValidationService;
+    private final KafkaTemplate<String, Activity> kafkaTemplate;
+    private final MongoTemplate mongoTemplate;
+
+    @Value("${Kafka.topic.name}")
+    private String topicName;
 
     public ActivityResponse trackActivity(ActivityRequest request) {
 
@@ -27,7 +35,23 @@ public class ActivityService {
                 .additionalMetrics(request.getAdditionalMetrics())
                 .build();
 
+//        Activity savedActivity = activityRepository.save(activity);
         Activity savedActivity = activityRepository.save(activity);
+
+        System.out.println("MongoDB database: "
+                + mongoTemplate.getDb().getName());
+
+        System.out.println("MongoDB collection: "
+                + mongoTemplate.getCollectionName(Activity.class));
+
+        System.out.println("Saved activity ID: "
+                + savedActivity.getId());
+        try{
+            kafkaTemplate.send(topicName , savedActivity.getUserId() , savedActivity);
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+
         return mapToResponse(savedActivity);
     }
 
